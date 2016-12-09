@@ -22,9 +22,8 @@ int getval(FILE *f, const char *fname) {
 		printf("Could not open %s\n", fname);
 		errno = 2;
 	} else {
-		while(fgets(fbuf, MBCH, f)) {
-			ret = atoi(fbuf);
-		}
+		fgets(fbuf, MBCH, f);
+		ret = atoi(fbuf);
 	}
 
 	return ret;
@@ -102,7 +101,8 @@ int main(int argc, char *argv[]) {
 		return usage(argv[0], max, bf);
 
 	} else if (argc == 1) {
-		printf("cur: %d, max: %d\n", cur, max);
+		int perc = ((float)cur / (float)max) * 100;
+		printf("cur: %d (%d%%), max: %d\n", cur, perc, max);
 		return 0;
 	}
 
