@@ -71,6 +71,7 @@ int sper(const char *str, int cur, int max) {
 	float flch = 0, flret = 0;
 
 	strncpy(noper, str, len-1);
+	noper++;
 	int val = mkint(noper);
 
 	if (val < 0 || val > 100) {
