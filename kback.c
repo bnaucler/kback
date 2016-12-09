@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #define MBCH 16
 #define MAXF "/sys/class/backlight/intel_backlight/max_brightness"
@@ -19,7 +20,7 @@ int getval(FILE *f, const char *fname) {
 
 	if (f == NULL) {
 		printf("Could not open %s\n", fname);
-		return -1;
+		errno = 2;
 	} else {
 		while(fgets(fbuf, MBCH, f)) {
 			ret = atoi(fbuf);
@@ -35,11 +36,8 @@ int mkint(const char *str) {
 	char *ptr;
 
 	val = strtol(str, &ptr, 10);
-	if (ptr == str) {
-		return -1;
-	} else {
-		return (int) val;
-	}
+	if (ptr == str) { errno = 61; } 
+	return (int) val;
 }
 
 int sfix(char *str, int cur, int max) {
@@ -71,23 +69,19 @@ int sper(const char *str, int cur, int max) {
 	float flch = 0, flret = 0;
 
 	strncpy(noper, str, len-1);
-	noper++;
+	if (str[0] == '+' || str[0] == '-' ) { noper++; }
 	int val = mkint(noper);
 
-	if (val < 0 || val > 100) {
-		return -1;
+	flch = (float)val/100 * (float)max;
+
+	if (str[0] == '+') {
+		flret = (float)cur + flch;
+
+	} else if (str[0] == '-') {
+		flret = (float)cur - flch;
+
 	} else {
-		flch = (float)val/100 * (float)max;
-
-		if (str[0] == '+') {
-			flret = (float)cur + flch;
-
-		} else if (str[0] == '-') {
-			flret = (float)cur - flch;
-
-		} else {
-			flret = flch;
-		}
+		flret = flch;
 	}
 
 	return (int) flret;
@@ -118,7 +112,10 @@ int main(int argc, char *argv[]) {
 		setnew = sfix(argv[1], cur, max);
 	}
 
-	if (setnew < 0 || setnew > max) {
+	if (setnew > max) { setnew = max; }
+	if (setnew < 0) { setnew = 0; }
+
+	if (errno) {
 		return usage(argv[0], max, bf);
 
 	} else {
