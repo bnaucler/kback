@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 #include <errno.h>
 
 #define MBCH 16
@@ -112,7 +111,7 @@ int main(int argc, char *argv[]) {
 
 	} else if (errno == 2) {
 		return errno;
- 
+
 	} else {
 
 		if (argv[1][strlen(argv[1])-1] == '%') {
@@ -123,7 +122,6 @@ int main(int argc, char *argv[]) {
 
 		if (setnew > max) { setnew = max; }
 		if (setnew < 0) { setnew = 0; }
-
 
 		fprintf(bf, "%d", setnew);
 	}
