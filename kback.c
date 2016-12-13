@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <errno.h>
 
 #define MBCH 16
@@ -35,7 +36,7 @@ int mkint(const char *str) {
 	char *ptr;
 
 	val = strtol(str, &ptr, 10);
-	if (ptr == str) { errno = 61; } 
+	if (ptr == str) { errno = 61; }
 	return (int) val;
 }
 
@@ -100,25 +101,30 @@ int main(int argc, char *argv[]) {
 	if (argc > 2) {
 		return usage(argv[0], max, bf);
 
-	} else if (argc == 1) {
+	} else if (argc == 1 && !errno) {
 		int perc = ((float)cur / (float)max) * 100;
 		printf("cur: %d (%d%%), max: %d\n", cur, perc, max);
 		return 0;
 	}
 
-	if (argv[1][strlen(argv[1])-1] == '%') {
-		setnew = sper(argv[1], cur, max);
-	} else {
-		setnew = sfix(argv[1], cur, max);
-	}
-
-	if (setnew > max) { setnew = max; }
-	if (setnew < 0) { setnew = 0; }
-
-	if (errno) {
+	if (errno && errno != 2) {
 		return usage(argv[0], max, bf);
 
+	} else if (errno == 2) {
+		return errno;
+ 
 	} else {
+
+		if (argv[1][strlen(argv[1])-1] == '%') {
+			setnew = sper(argv[1], cur, max);
+		} else {
+			setnew = sfix(argv[1], cur, max);
+		}
+
+		if (setnew > max) { setnew = max; }
+		if (setnew < 0) { setnew = 0; }
+
+
 		fprintf(bf, "%d", setnew);
 	}
 
