@@ -38,14 +38,10 @@ int mkint(const char *str) {
 
 int sfix(char *str, int cur, int max) {
 
-	int ret = 0;
-
-	if (strncmp(str, "max", MBCH) == 0) ret = max;
-	else if (str[0] == '+') ret = (cur + mkint(++str));
-	else if (str[0] == '-') ret = (cur - mkint(++str));
-	else ret = mkint(str);
-
-	return ret;
+	if (strncmp(str, "max", MBCH) == 0) return max;
+	else if (str[0] == '+') return (cur + mkint(++str));
+	else if (str[0] == '-') return (cur - mkint(++str));
+	else return mkint(str);
 }
 
 int sper(char *str, int cur, int max) {
