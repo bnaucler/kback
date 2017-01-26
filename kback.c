@@ -38,7 +38,7 @@ int mkint(const char *str) {
 
 int sfix(char *str, int cur, int max) {
 
-	if (strncmp(str, "max", MBCH) == 0) return max;
+	if (!strncmp(str, "max", MBCH)) return max;
 	else if (str[0] == '+') return (cur + mkint(++str));
 	else if (str[0] == '-') return (cur - mkint(++str));
 	else return mkint(str);
@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
 		return usage(argv[0], max, bf);
 
 	} else if (argc == 1 && !errno) {
-		int perc = ((float)cur / (float)max) * 100;
-		printf("cur: %d (%d%%), max: %d\n", cur, perc, max);
+		printf("cur: %d (%d%%), max: %d\n",
+			cur, (int)((float)cur / (float)max) * 100, max);
 		return 0;
 	}
 
