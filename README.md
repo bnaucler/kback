@@ -1,4 +1,4 @@
-# kback v0.1
+# kback v0.2
 A quick hack to set backlight brightness of my ThinkPad in Linux. Hopefully someone else also finds value in it. Written to operate with [sxhkd](https://github.com/baskerville/sxhkd).
 
 ## Written by
