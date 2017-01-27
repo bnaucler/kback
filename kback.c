@@ -16,16 +16,6 @@ int usage(const char *cn, const int max, FILE *f) {
 	return 1;
 }
 
-int getval(FILE *f, const char *fname) {
-
-	char fbuf[MBCH] = "\0";
-
-	if (!f) errno = ENOENT;
-	else fgets(fbuf, MBCH, f);
-
-	return atoi(fbuf);
-}
-
 int mkint(const char *str) {
 
 	char *ptr;
@@ -34,6 +24,16 @@ int mkint(const char *str) {
 	if (str == ptr) errno = EINVAL;
 
 	return (int) ret;
+}
+
+int getval(FILE *f, const char *fname) {
+
+	char fbuf[MBCH] = "";
+
+	if (!f) errno = ENOENT;
+	else fgets(fbuf, MBCH, f);
+
+	return mkint(fbuf);
 }
 
 int sfix(char *str, int cur, int max) {
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 
 	} else if (argc == 1 && !errno) {
 		printf("cur: %d (%d%%), max: %d\n",
-			cur, (int)((float)cur / (float)max) * 100, max);
+			cur, (int)(((float)cur / (float)max) * 100), max);
 		return 0;
 	}
 
