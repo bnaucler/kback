@@ -26,7 +26,7 @@ int mkint(const char *str) {
 	return (int) ret;
 }
 
-int getval(FILE *f, const char *fname) {
+int getval(FILE *f) {
 
 	char fbuf[MBCH] = "";
 
@@ -57,10 +57,10 @@ int sper(char *str, int cur, int max) {
 int main(int argc, char *argv[]) {
 
 	FILE *mf = fopen(MAXF, "r");
-	int max = getval(mf, MAXF);
+	int max = getval(mf);
 
 	FILE *bf = fopen(BRIF, "w+");
-	int cur = getval(bf, BRIF);
+	int cur = getval(bf);
 
 	int setnew = 0;
 
