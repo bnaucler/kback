@@ -13,7 +13,8 @@ int usage(const char *cn, const int max, FILE *f) {
 
 	printf("Usage: %s [[0-%d]|[[+|-]0-100%%]|max]\n", cn, max);
 	fclose(f);
-	return 1;
+
+	return errno;
 }
 
 int mkint(const char *str) {
@@ -39,30 +40,27 @@ int getval(FILE *f) {
 int sfix(char *str, int cur, int max) {
 
 	if (!strncmp(str, "max", MBCH)) return max;
-	else if (str[0] == '+') return (cur + mkint(++str));
-	else if (str[0] == '-') return (cur - mkint(++str));
+	else if (str[0] == '+' || str[0] == '-') return (cur + mkint(str));
 	else return mkint(str);
 }
 
 int sper(char *str, int cur, int max) {
 
-	if (str[0] == '+')
-		return(int) ((float)mkint(++str)/100 * (float)max) + (float)cur;
-	else if (str[0] == '-')
-		return(int) (float)cur - (float)mkint(++str)/100 * (float)max;
-	else
-		return(int) ((float)mkint(str)/100 * (float)max);  
+	if (str[0] == '+' || str[0] == '-')
+		 return(int) ((float)mkint(str)/100 * (float)max) + (float)cur;
+	else return(int) ((float)mkint(str)/100 * (float)max);
 }
 
 int main(int argc, char *argv[]) {
 
+	int max = 0, cur = 0;
+
 	FILE *mf = fopen(MAXF, "r");
-	int max = getval(mf);
+	if(!errno) max = getval(mf);
+	fclose(mf);
 
 	FILE *bf = fopen(BRIF, "w+");
-	int cur = getval(bf);
-
-	int setnew = 0;
+	if(!errno) cur = getval(bf);
 
 	if (errno) return usage(argv[0], max, bf);
 
@@ -75,6 +73,8 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
+	int setnew = 0;
+
 	if (argv[1][strlen(argv[1])-1] == '%') setnew = sper(argv[1], cur, max);
 	else setnew = sfix(argv[1], cur, max);
 	if (setnew > max) setnew = max;
@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
 
 	fprintf(bf, "%d", setnew);
 
-	fclose(mf);
 	fclose(bf);
 	return 0;
 }
