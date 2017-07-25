@@ -59,9 +59,7 @@ int main(int argc, char **argv) {
 
 	if((bf = fopen(BRIF, "w+"))) cur = getval(bf);
 
-	if(errno) return usage(argv[0], max, bf);
-
-	if(argc > 2) {
+	if(errno || argc > 2) {
 		return usage(argv[0], max, bf);
 
 	} else if(argc == 1) {
@@ -73,10 +71,10 @@ int main(int argc, char **argv) {
 	if(argv[1][strlen(argv[1])-1] == '%') nval = sper(argv[1], cur, max);
 	else nval = sfix(argv[1], cur, max);
 
+	if(errno) return usage(argv[0], max, bf);
+
 	if(nval > max) nval = max;
 	else if(nval < 0) nval = 0;
-
-	if(errno) return usage(argv[0], max, bf);
 
 	fprintf(bf, "%d", nval);
 	fclose(bf);
