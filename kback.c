@@ -7,7 +7,7 @@
 #define MAXF "/sys/class/backlight/intel_backlight/max_brightness"
 #define BRIF "/sys/class/backlight/intel_backlight/brightness"
 
-static long usage(const char *cn, const long max, FILE *f) {
+static int usage(const char *cn, const long max, FILE *f) {
 
 	if(errno) fprintf(stderr, "Error: %s\n", strerror(errno));
 
@@ -56,15 +56,12 @@ int main(int argc, char **argv) {
 
 	if((mf = fopen(MAXF, "r"))) max = getval(mf);
 	if((bf = fopen(BRIF, "w+"))) cur = getval(bf);
-	fclose(mf);
+	if(mf) fclose(mf);
 
-	if(errno || argc > 2) {
+	if(errno || argc > 2)
 		return usage(argv[0], max, bf);
-
-	} else if(argc == 1) {
-		printf("cur: %ld (%ld%%), max: %ld\n", cur, (cur * 100) / max, max);
-		return 0;
-	}
+	else if(argc == 1)
+        return printf("cur: %ld (%ld%%), max: %ld\n", cur, (cur * 100) / max, max);
 
 	nval = (argv[1][strlen(argv[1])-1] == '%') ?
 		sper(argv[1], cur, max):
