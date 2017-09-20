@@ -38,15 +38,12 @@ static long getval(FILE *f) {
 static long sfix(const char *str, const long cur, const long max) {
 
     if(!strncmp(str, "max", MBCH)) return max;
-    else if(str[0] == '+' || str[0] == '-') return cur + matoi(str);
-    else return matoi(str);
+    else return matoi(str) + (str[0] == '+' || str[0] == '-' ? cur : 0);
 }
 
 static long sper(const char *str, const long cur, const long max) {
 
-    return str[0] == '+' || str[0] == '-' ?
-        (matoi(str) * max) / 100 + cur:
-        (matoi(str) * max) / 100;
+    return (matoi(str) * max) / 100 + (str[0] == '+' || str[0] == '-' ? cur : 0);
 }
 
 int main(int argc, char **argv) {
@@ -63,7 +60,7 @@ int main(int argc, char **argv) {
     else if(argc == 1)
         return printf("cur: %ld (%ld%%), max: %ld\n", cur, (cur * 100) / max, max);
 
-    nval = (argv[1][strlen(argv[1])-1] == '%') ?
+    nval = argv[1][strlen(argv[1])-1] == '%' ?
         sper(argv[1], cur, max):
         sfix(argv[1], cur, max);
 
